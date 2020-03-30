@@ -1,0 +1,27 @@
+extends ../layout
+
+block content
+    a(href='/bicycles/create') New Bicycle
+    br
+    br
+    table.table
+        thead
+            tr
+                th(scope='col') #
+                th(scope='col') Color
+                th(scope='col') Model
+                th(scope='col') Ubication
+                th(scope='col')
+                th(scope='col')
+        tbody
+            each bici in bikes
+                tr
+                    td(scope='row')= bici.id
+                    td= bici.color
+                    td= bici.model
+                    td= bici.ubication
+                    td
+                        a(href='bicycles/' + bici.id + '/update') Edit
+                    td
+                        form.form-inline(method='POST' action='bicycles/' + bici.id +'/delete')
+                            button.link-button.btn(type='submit' name='submitParam' value='submitValue')= 'Eliminar'
