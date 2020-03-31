@@ -4,6 +4,10 @@ exports.bicyclesList = (req, res) => {
     res.render('bicycles/index', {bikes: Bicycle.allBikes});
 }
 
+exports.bicyclesRead = (req, res) => {
+    res.render('bicycles/read', {bikes: Bicycle.allBikes});
+}
+
 exports.bicyclesCreateGet = (req, res) => {
     res.render('bicycles/create')
 }

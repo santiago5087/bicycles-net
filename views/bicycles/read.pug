@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+    a(href='/bicycles') Go Back
+    br
+    br
+    table.table
+        thead
+            tr 
+                th #
+                th Model
+                th Color
+                th Latitude
+                th Longitude
+        tbody
+            each bike in bikes
+                tr
+                    td= bike.id
+                    td= bike.model
+                    td= bike.color
+                    td= bike.ubication[0]
+                    td= bike.ubication[1]
