@@ -40,7 +40,7 @@ exports.bicycle_update = (req, res) => {
 }
 
 exports.bicycle_delete = (req, res) => {
-    var bike = Bicycle.findById(req.body.id);
+    var bike = Bicycle.findById(req.params.id);
     var i = Bicycle.allBikes.indexOf(bike);
     Bicycle.allBikes.splice(i, 1)
     res.status(200).json({
