@@ -1,3 +1,51 @@
+var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+
+//El esquema es la estructura de una colección y ell modelo es el que define las operaciones sobre la DB
+
+var bicycleSchema = new Schema({
+    code: Number,
+    color: String,
+    model: String,
+    ubication: {
+        type: [Number], index: {type: '2dsphere', sparse: true}
+    }
+});
+
+//methods: propio de cada objeto
+bicycleSchema.methods.toString = () => { 
+    return `code: ${this.code} | color: ${this.color}`;
+}
+
+//statics: propio de la clase (todo los objetos que pertenezcan)
+bicycleSchema.statics.allBikes = function(cb) { 
+    this.find({}, cb);
+}
+
+bicycleSchema.statics.createInstance = function(code, color, model, ubication) {
+    return new this({
+        code: code,
+        color: color,
+        model: model,
+        ubication: ubication
+    });
+}
+
+bicycleSchema.statics.add = function(newBike, cb) {
+    this.create(newBike, cb);
+}
+
+bicycleSchema.statics.findByCode = function(bCode, cb) {
+    this.findOne({code: bCode}, cb);
+}
+
+bicycleSchema.statics.removeByCode = function(bCode, cb) {
+    this.deleteOne({code: bCode}, cb);
+}
+
+module.exports = mongoose.model('Bicycle', bicycleSchema);
+
+/*
 var Bicycle = function(id, model, color, ubication) {
     this.id = id;
     this.model = model;
@@ -5,9 +53,9 @@ var Bicycle = function(id, model, color, ubication) {
     this.ubication = ubication;
 }
 
-Bicycle.prototype.toString = function() {
-    return `id: ${this.id} + | color: ${this.color}`
-}
+// Bicycle.prototype.toString = function() {
+//     return `id: ${this.id} + | color: ${this.color}`
+// }
 
 Bicycle.allBikes = []
 
@@ -39,3 +87,4 @@ Bicycle.removeById = function(idBike) {
 // Bicycle.add(b);
 
 module.exports = Bicycle;
+*/

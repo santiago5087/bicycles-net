@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -10,6 +11,12 @@ var bicyclesRouter = require('./routes/bicycles');
 var bicyclesAPIRouter = require('./routes/api/bicycles');
 
 var app = express();
+
+var mongoDB = "mongodb://localhost/netBicyclesDB"; //Si no existe la DB la crea
+mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.set('useCreateIndex', true);
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'MongoDB connection error: '));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
