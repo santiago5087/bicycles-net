@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Bicycle = require("../../models/bicycle");
 
 beforeAll((done) => {
-    var mongoDB = "mongodb://localhost/netBicyclesDB";
+    var mongoDB = "mongodb://localhost/testDB";
     mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
 
     const db = mongoose.connection;
@@ -95,10 +95,7 @@ describe('Testing Bicycles', () => {
                 })
             })
         })
-    });
-    //Actualizar los de la API
-    //Hacer el test del modelo de usuario
-
+    })
 });
 
 /*

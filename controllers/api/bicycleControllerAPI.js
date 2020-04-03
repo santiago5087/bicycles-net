@@ -34,7 +34,7 @@ exports.bicycle_update = function(req, res) {
 }
 
 exports.bicycle_delete = (req, res) => {
-    var bike = Bicycle.deleteOne({code: req.params.code}, (err) => {
+    Bicycle.deleteOne({code: req.params.code}, (err) => {
         res.status(200).json({
             message: "Deleted bicycle"
         })
