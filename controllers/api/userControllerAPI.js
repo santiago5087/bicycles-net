@@ -1,9 +1,9 @@
 var User = require('../../models/user');
 
 exports.user_list = (req, res) => {
-    User.find({}, (err, res) => {
+    User.find({}, (err, result) => {
         res.status(200).json({
-            bikes: res
+            bikes: result
         })
     })
 }
