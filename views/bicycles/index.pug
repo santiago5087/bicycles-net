@@ -23,7 +23,7 @@ block content
                     td= bici.model
                     td= bici.ubication
                     td
-                        a(href='bicycles/' + bici.id + '/update') Edit
+                        a.btn(href='bicycles/' + bici.id + '/update') Edit
                     td
                         form.form-inline(method='POST' action='bicycles/' + bici.id +'/delete')
-                            button.link-button.btn(type='submit' name='submitParam' value='submitValue')= 'Eliminar'
+                            button.btn(type='submit' name='submitParam' value='submitValue') Delete

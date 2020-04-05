@@ -1,0 +1,22 @@
+extends ../layout
+
+block content
+    a(href='/users/create') New User
+    br
+    br
+    table.table
+        thead
+            tr
+                th(scope='col') Email
+                th(scope='col') Name
+                th(scope='col') Verificated
+                th(scope='col')
+        tbody
+            each user in users
+                tr
+                    td(scope='row')= user.email
+                    td= user.name
+                    td= user.verificated ? 'Yes' : 'No'
+                    td
+                        form.form-inline(method='POST' action='users/' + user.id +'/delete')
+                            button.btn(type='submit' name='submitParam' value='submitValue') Delete

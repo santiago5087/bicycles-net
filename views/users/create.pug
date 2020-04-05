@@ -1,0 +1,43 @@
+extends ../layout
+
+block content
+    a(href='/users') Go Back
+
+    br
+    br
+    br
+
+    h1 New User
+
+    br
+    br
+
+    //errors es el objeto que nos devuelve mongoose en caso de haber algún error
+    //is-invalid le pone algunos estilos para que se vea como un error
+    form(action="/users/create" method='POST')
+        .form-group
+            label(for="name") Name:
+            input#name.form-control(type='text' name='name' value=user.name class=errors.name ? 'is-invalid' : '')
+            if errors.name
+                small#nameHelp.text-danger= errors.name.message
+        br
+        .form-group
+            label(for="Email") Email:
+            input#email.form-control(type='text' name='email' value=user.email class=errors.email ? 'is-invalid': '')
+            if errors.email
+                small#emailHelp.text-danger= errors.email.message
+        br
+        .form-group
+            label(for="password") Password:
+            input#password.form-control(type='password' name='password' class=errors.password ? 'is-invalid': '')
+            if errors.password
+                small#passwordHelp.text-danger= errors.password.message
+        br
+        .form-group
+            label(for="confirm_pwd") Confirm password:
+            input#confirm_pwd.form-control(type='password' name='confirm_password' class=errors.confirm_password ? 'is-invalid': '')
+            if errors.confirm_password
+                small#confim_passwordHelp.text-danger= errors.confirm_password.message
+        br
+        br
+        input.btn.btn-primary(type="submit" value="OK")
