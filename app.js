@@ -10,6 +10,7 @@ var session = require('express-session');
 var indexRouter = require('./routes/index');
 var bicyclesRouter = require('./routes/bicycles');
 var bicyclesAPIRouter = require('./routes/api/bicycles');
+
 var usersRouter = require('./routes/users');
 var usersAPIRouter = require('./routes/api/users');
 var tokenRouter = require('./routes/token');
@@ -51,6 +52,33 @@ app.use('/bicycles', bicyclesRouter);
 app.use('/token', tokenRouter);
 app.use('/api/bicycles', bicyclesAPIRouter);
 app.use('/api/users', usersAPIRouter);
+
+app.get('/login', (req, res, next) => {
+  res.render('session/login');
+});
+
+app.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) return next(err);
+    if (!user) return res.render('session/login', {info});
+    req.logIn(user, (err) => {
+      return res.redirect('/');
+    });
+  })(req, res, next); //Primero definimos el authenticate y luego lo ejecutamos pasándole esto sparámetros
+});
+
+app.get('/logout', (req, res) => {
+  req.logOut();
+  res.redirect('/');
+});
+
+app.get('/forgotPassword', (req, res) => {
+  res.render('session/forgotPassword');
+});
+
+app.post('/forgotPassword', (req, res) => {
+
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

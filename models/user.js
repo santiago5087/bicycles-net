@@ -54,7 +54,7 @@ userSchema.pre('save', function(next) { //Si se utiliza un arrow function no fun
 
 userSchema.plugin(uniqueValidator, {message: "Error, {PATH} already exists"});
 
-userSchema.methods.validPassword = (pass) => {
+userSchema.methods.validPassword = function(pass) {
     return bcrypt.compareSync(pass, this.password);
 }
 
