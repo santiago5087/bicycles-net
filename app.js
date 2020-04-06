@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
+var passport = require('./config/passport');
+var session = require('express-session');
 
 var indexRouter = require('./routes/index');
 var bicyclesRouter = require('./routes/bicycles');
@@ -13,6 +15,17 @@ var usersAPIRouter = require('./routes/api/users');
 var tokenRouter = require('./routes/token');
 
 var app = express();
+
+const store = new session.MemoryStore;
+app.use(session({
+  cookie: {maxAge: 240 * 60 * 60 * 1000}, //Tiempo de duración de la cookie (milisec.)
+  store: store,
+  saveUninitialized: true,
+  resave: true,
+  secret: '***Bicycles network in Medellín !!!***'
+}));
+//secret: Es la semilla de la generación del código de ecriptación del id de la cookie que viaja entre el servidor y el cliente
+
 
 var mongoDB = "mongodb://localhost/netBicyclesDB"; //Si no existe la DB la crea
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
@@ -28,6 +41,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(passport.initialize());
+app.use(passport.session()); //Para cuando se usa sesiones persistentes
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
