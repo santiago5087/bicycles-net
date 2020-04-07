@@ -9,14 +9,15 @@ L.marker([6.2619358, -75.6042681]).addTo(map); //CS Santa Rosa de Lima
 L.marker([6.256864, -75.5923187]).addTo(map); //Estadio
 L.marker([6.2614712, -75.5793956]).addTo(map); //Unal Medellín
 */
-console.log(L.marker); //Corregir!
-$.ajax({
-    dataType: 'json', //Parsea la info resultado a json
-    url: 'api/bicycles',
-    success: function(result) {
-        console.log(result)
-        result.bicycles.forEach(e => {
-            L.marker(e.ubication, {title: e.id}).addTo(map);
-        });
-    }
-})
+
+//Corregir!
+// $.ajax({
+//     dataType: 'json', //Parsea la info resultado a json
+//     url: 'api/bicycles',
+//     success: function(result) {
+//         console.log(result)
+//         result.bicycles.forEach(e => {
+//             L.marker(e.ubication, {title: e.id}).addTo(map);
+//         });
+//     }
+// })
