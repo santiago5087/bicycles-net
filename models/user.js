@@ -75,7 +75,7 @@ userSchema.methods.sendWelcomeEmail = function(cb) {
             from: 'no-reply@bicylesnet.com',
             to: emailDestination,
             subject: "Account verification",
-            text: 'Hi!, \n\n' + 'Please, to verficate your account click on this link: ' + 'http://localhost:3000' + '\/token/confirmation\/' + token.token + ' \n'
+            text: 'Hi!, \n\n' + 'Please, to verficate your account click on this link: \n' + 'http://localhost:3000' + '\/token/confirmation\/' + token.token + ' \n'
         }
 
         mailer.sendMail(mailOptions, function(err) {
@@ -83,6 +83,28 @@ userSchema.methods.sendWelcomeEmail = function(cb) {
             console.log('A verificatin email has been sent to: ' + emailDestination + '.');
         })
     })
+}
+
+userSchema.methods.resetPassword = function(cb) {
+    const token = new Token({_userId: this.id, token: crypto.randomBytes(16).toString('hex')});
+    const emailDestination = this.email;
+    token.save((err) => {
+        if (err) { return cb(err); }
+
+        const mailOptions = {
+            from: 'no-reply@bicylesnet.com',
+            to: emailDestination,
+            subject: 'Account password reset',
+            text: 'Hi!, \n\n' + 'Please, to reset the password your account click on this link: \n' + 'http://localhost:3000' + '\/resetPassword\/' + token.token + ' \n'
+        }
+
+        mailer.sendMail(mailOptions, function(err) {
+            if (err) return console.log(err.message);
+            console.log('A password reset email has been sent to: ' + emailDestination + '.');
+        });        
+
+        cb(null);
+    });
 }
 
 module.exports = mongoose.model('User', userSchema);

@@ -6,16 +6,22 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var passport = require('./config/passport');
 var session = require('express-session');
+var jwt = require('jsonwebtoken');
+var User = require('./models/user');
+var Token = require('./models/token');
 
 var indexRouter = require('./routes/index');
 var bicyclesRouter = require('./routes/bicycles');
 var bicyclesAPIRouter = require('./routes/api/bicycles');
+var authAPIRouter = require('./routes/api/auth');
 
 var usersRouter = require('./routes/users');
 var usersAPIRouter = require('./routes/api/users');
 var tokenRouter = require('./routes/token');
 
 var app = express();
+
+app.set('secretKey', 'miClaveSuperSecreta112233');
 
 const store = new session.MemoryStore;
 app.use(session({
@@ -48,9 +54,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/bicycles', bicyclesRouter);
+app.use('/bicycles', loggedIn, bicyclesRouter);
 app.use('/token', tokenRouter);
-app.use('/api/bicycles', bicyclesAPIRouter);
+
+app.use('/api/auth', authAPIRouter);
+app.use('/api/bicycles', validateUser, bicyclesAPIRouter);
 app.use('/api/users', usersAPIRouter);
 
 app.get('/login', (req, res, next) => {
@@ -77,7 +85,40 @@ app.get('/forgotPassword', (req, res) => {
 });
 
 app.post('/forgotPassword', (req, res) => {
+  User.findOne({email: req.body.email}, (err, user) => {
+    if (!user) return res.render('session/forgotPassword', {info: {message: 'This email doesn\'t exist for an existing user'}});
 
+    user.resetPassword((err) => {
+      if (err) return next(err);
+      res.render('session/forgotPasswordMessage');
+    });
+  });
+});
+
+app.get('/resetPassword/:token', (req, res, next) => {
+  Token.findOne({token: req.params.token}, (err, token) => {
+    if (!token) return res.status(400).send({type: 'not-verified', msg: "There's no user with the associated token. Verify your token doesn't have expire."});
+
+    User.findById(token._userId, (err, user) => {
+      if (!user) return res.status(400).send({msg: "There's no user with the associated token."});
+      res.render('session/resetPassword', {errors: {}, user: user});
+    });
+  });
+});
+
+app.post('/resetPassword', (req, res) => {
+  if (req.body.password != req.body.confirm_password) {
+    res.render('session/resetPassword', {errors: {confirm_password: {message: "Doesn't match with the password entered"}}, user: new User({email: req.body.email})});
+    return;
+  }
+
+  User.findOne({email: req.body.email}, (err, user) => {
+    user.password = req.body.password;
+    user.save((err) => {
+      if (err) res.render('session/resetPassword', {errors: err.errors, user: new User({email: req.body.email})});
+      else res.redirect('/login');
+    });
+  });
 });
 
 // catch 404 and forward to error handler
@@ -95,5 +136,25 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+function loggedIn(req, res, next) { //Para la parte web, para API se hace de otra forma
+  if (req.user) next();
+  else {
+    console.log('User without sign in');
+    res.redirect('/login');
+  }
+}
+
+//secretKey: clave con la cual se cifra el token
+function validateUser(req, res, next) {
+  jwt.verify(req.headers['x-acces-token'], req.app.get('secretKey'), (err, decoded) => {
+    if (err) res.json({status: "error", message: err.message, data: null});
+    else {
+      req.body.userId = decoded.id;
+      console.log('jwt verify: ' + decoded);
+      next();
+    }
+  });
+}
 
 module.exports = app;
