@@ -19,7 +19,7 @@ if (process.env.NODE_ENV === 'production') {
     } else {
         //All emails are catched by ethereal.email
         //Development environment
-        var mailConfig = {
+        mailConfig = {
             host: 'smtp.ethereal.email',
             port: 587,
             auth: {
