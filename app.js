@@ -1,3 +1,4 @@
+require('dotenv').config();
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
@@ -33,8 +34,7 @@ app.use(session({
 }));
 //secret: Es la semilla de la generación del código de ecriptación del id de la cookie que viaja entre el servidor y el cliente
 
-
-var mongoDB = "mongodb://localhost/netBicyclesDB"; //Si no existe la DB la crea
+var mongoDB = process.env.MONGO_URI;
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
 mongoose.set('useCreateIndex', true);
 var db = mongoose.connection;
