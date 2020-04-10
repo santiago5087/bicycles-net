@@ -31,10 +31,10 @@ if (process.env.NODE_ENV == 'development') {
     collection: 'sessions'
   });
   
-  store.on('error', (err) => {
-    assert.ifError(error);
-    assert.ok(false);
-  });
+  // store.on('error', (err) => {
+  //   assert.ifError(error);
+  //   assert.ok(false);
+  // });
 }
 
 var app = express();
