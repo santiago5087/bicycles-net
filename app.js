@@ -121,9 +121,9 @@ app.post('/resetPassword', (req, res) => {
   });
 });
 
-app.use('/privacyPolicy', (req, res) => {
-  res.sendFile('public/privacyPolicy.html');
-})
+// app.use('/privacyPolicy', (req, res) => {
+//   res.sendFile('public/privacyPolicy.html');
+// })
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
