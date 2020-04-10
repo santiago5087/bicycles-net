@@ -6,8 +6,10 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var passport = require('./config/passport');
+var MongoDBStore = require('connect-mongodb-session')(session);
 var session = require('express-session');
 var jwt = require('jsonwebtoken');
+
 var User = require('./models/user');
 var Token = require('./models/token');
 
@@ -20,11 +22,24 @@ var usersRouter = require('./routes/users');
 var usersAPIRouter = require('./routes/api/users');
 var tokenRouter = require('./routes/token');
 
+var store;
+if (process.env.NODE_ENV == 'development') {
+  store = new session.MemoryStore;
+} else {
+  store = new MongoDBStore({
+    uri: process.env.MONGO_URI,
+    collection: 'sessions'
+  });
+  
+  store.on('error', (err) => {
+    assert.ifError(error);
+    assert.ok(false);
+  });
+}
+
 var app = express();
 
 app.set('secretKey', 'miClaveSuperSecreta112233');
-
-const store = new session.MemoryStore;
 app.use(session({
   cookie: {maxAge: 240 * 60 * 60 * 1000}, //Tiempo de duración de la cookie (milisec.)
   store: store,
@@ -60,6 +75,18 @@ app.use('/token', tokenRouter);
 app.use('/api/auth', authAPIRouter);
 app.use('/api/bicycles', validateUser, bicyclesAPIRouter);
 app.use('/api/users', usersAPIRouter);
+
+//Permisos de la API
+app.get('/auth/google', 
+  passport.authenticate('google', {scope: [
+    'https://www.googleapis.com/auth/plus.login',
+    'https://www.googleapis.com/auth/plus.profile.emails.read']}
+    ));
+
+app.get('/auth/google/callback', passport.authenticate('google', {
+  successRedirect: '/',
+  failureRedirect: '/error'
+}));
 
 app.get('/login', (req, res, next) => {
   res.render('session/login');

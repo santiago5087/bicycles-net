@@ -1,5 +1,6 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/user');
 
 passport.use(new LocalStrategy(
@@ -10,6 +11,20 @@ passport.use(new LocalStrategy(
             if (!user.validPassword(password)) {return done(null, false, {message: 'Incorrect password'}); }
 
             return done(null, user)
+        });
+    }
+));
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.HOST + "/auth/google/callback"
+},
+    function(accessToken, refreshToken, profile, cb) { //profile: datos de la cuenta de google
+        console.log(profile);
+
+        User.findOneOrCreatedByGoogle(profile, (err, user) => {
+            return cb(err, user);
         });
     }
 ));
