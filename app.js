@@ -6,8 +6,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
 var passport = require('./config/passport');
-var MongoDBStore = require('connect-mongodb-session')(session);
 var session = require('express-session');
+var MongoDBStore = require('connect-mongodb-session')(session);
 var jwt = require('jsonwebtoken');
 
 var User = require('./models/user');
