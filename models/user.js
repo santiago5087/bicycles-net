@@ -20,20 +20,20 @@ var userSchema = new Schema({
     name: {
         type: String,
         trim: true,
-        required: true
+        //required: true
     },
     email: {
         type: String,
         unique: true, //No funciona sin el plugin
         trim: true,
-        required: true,
+        //required: true,
         lowercase: true,
         validate: validateEmail, //mongoose
         match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/ //mongodb
     },
     password: {
         type: String,
-        required: true
+        //required: true
     },
     passwordResetToken: String,
     passwordResetTokenExpires: Date,
