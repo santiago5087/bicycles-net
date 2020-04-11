@@ -112,8 +112,8 @@ userSchema.statics.findOneOrCreateByGoogle = function(condition, callback) {
     console.log(condition);
     self.findOne({
         $or: [
-        {'googleId': condition.id}, {'email': condition.emails[0].value}
-        ]}, (err, result) => {
+        {googleId: condition.id}, {email: condition.emails[0].value}
+        ]}, function(err, result) {
             if (result) {
                 callback(err, result);
             } else {
@@ -122,12 +122,12 @@ userSchema.statics.findOneOrCreateByGoogle = function(condition, callback) {
                 var values = {}
                 values.googleId = condition.id;
                 values.email = condition.emails[0].value;
-                values.nombre = condition.displayName || 'NAMELESS';
+                values.name = condition.displayName || 'NAMELESS';
                 values.verificated = true;
                 values.password = condition._json.etag;
                 console.log('---------------- VALUES----------------------');
                 console.log(values);
-                self.create(values, (err, result) => {
+                self.create(values, function(err, result) {
                     if (err) console.log(err);
                     return callback(err, result);
                 });
