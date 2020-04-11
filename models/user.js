@@ -131,16 +131,10 @@ userSchema.statics.findOneOrCreateByGoogle = function findOrCreate(condition, ca
                 console.log('---------------- VALUES----------------------');
                 console.log(values);
 
-                var user = new User(values)
-                user.save((err, result) => {
+                self.create(values, function(err, result) {
                     if (err) console.log(err);
-                    else return callback(err, result)
+                    return callback(err, result);
                 });
-
-                // self.create(values, function(err, result) {
-                //     if (err) console.log(err);
-                //     return callback(err, result);
-                // });
             }
         });
 }
