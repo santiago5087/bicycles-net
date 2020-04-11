@@ -17,12 +17,12 @@ const validateEmail = (email) => {
 }
 
 var userSchema = new Schema({
+    googleId: String,
     name: {
         type: String,
         trim: true,
         //required: true
     },
-    googleId: String,
     email: {
         type: String,
         unique: true, //No funciona sin el plugin
@@ -127,13 +127,20 @@ userSchema.statics.findOneOrCreateByGoogle = function findOrCreate(condition, ca
                 values.email = condition.emails[0].value;
                 values.name = condition.displayName || 'NAMELESS';
                 values.verificated = true;
-                values.password = '111'
+                values.password = condition.id
                 console.log('---------------- VALUES----------------------');
                 console.log(values);
-                self.create(values, function(err, result) {
+
+                var user = new User(values)
+                user.save((err, result) => {
                     if (err) console.log(err);
-                    return callback(err, result);
+                    else return callback(err, result)
                 });
+
+                // self.create(values, function(err, result) {
+                //     if (err) console.log(err);
+                //     return callback(err, result);
+                // });
             }
         });
 }
