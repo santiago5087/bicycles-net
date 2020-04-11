@@ -127,7 +127,7 @@ userSchema.statics.findOneOrCreateByGoogle = function findOrCreate(condition, ca
                 values.email = condition.emails[0].value;
                 values.name = condition.displayName || 'NAMELESS';
                 values.verificated = true;
-                values.password = condition._json.etag;
+                values.password = '111'
                 console.log('---------------- VALUES----------------------');
                 console.log(values);
                 self.create(values, function(err, result) {
