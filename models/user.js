@@ -107,7 +107,9 @@ userSchema.methods.resetPassword = function(cb) {
     });
 }
 
-userSchema.statics.findOneOrCreateByGoogle = function(condition, callback) {
+userSchema.statics.findOneOrCreateByGoogle = function findOrCreate(condition, callback) {};
+/*
+function(condition, callback) {
     const self = this;
     console.log(condition);
     self.findOne({
@@ -134,5 +136,6 @@ userSchema.statics.findOneOrCreateByGoogle = function(condition, callback) {
             }
         });
 }
+*/
 
 module.exports = mongoose.model('User', userSchema);
