@@ -23,34 +23,41 @@ var usersAPIRouter = require('./routes/api/users');
 var tokenRouter = require('./routes/token');
 
 var store;
-if (process.env.NODE_ENV == 'development') {
-  store = new session.MemoryStore;
-} else {
-  store = new MongoDBStore({
-    uri: process.env.MONGO_URI,
-    collection: 'sessions'
-  });
-  
-  store.on('error', (err) => {
-    assert.ifError(error);
-    assert.ok(false);
-  });
-}
+  if (process.env.NODE_ENV == 'development') {
+    store = new session.MemoryStore;
+  } else {
+    store = new MongoDBStore({
+      uri: process.env.MONGO_URI,
+      collection: 'sessions'
+    });
+    
+    store.on('error', (err) => {
+      assert.ifError(error);
+      assert.ok(false);
+    });
+  }
+
+var app = express();
+
+app.set('secretKey', 'miClaveSuperSecreta112233');
+app.use(session({
+  cookie: {maxAge: 240 * 60 * 60 * 1000}, //Tiempo de duración de la cookie (milisec.)
+  store: store,
+  saveUninitialized: true,
+  resave: true,
+  secret: '***Bicycles network in Medellín !!!***'
+}));
 
 var mongoDB = process.env.MONGO_URI;
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
-mongoose.Promise = global.Promise;
 mongoose.set('useCreateIndex', true);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error: '));
 
-var app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
-
-app.set('secretKey', 'miClaveSuperSecreta112233');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -59,15 +66,6 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session()); //Para cuando se usa sesiones persistentes
 app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(session({
-  cookie: {maxAge: 240 * 60 * 60 * 1000}, //Tiempo de duración de la cookie (milisec.)
-  store: store,
-  saveUninitialized: true,
-  resave: true,
-  secret: '***Bicycles network in Medellín !!!***'
-}));
-//secret: Es la semilla de la generación del código de ecriptación del id de la cookie que viaja entre el servidor y el cliente
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
@@ -84,10 +82,7 @@ app.get("/auth/google", passport.authenticate("google", {
       "profile",
       "email"]} ));
 
-// app.get("/auth/google", passport.authenticate("google", {
-//     scope: ["profile", "email"]
-//   }));
-
+//Agregar el req.logIn() para ver si guarda la sesión
 app.get('/auth/google/callback', passport.authenticate('google', {
   successRedirect: '/',
   failureRedirect: '/error'
@@ -152,10 +147,6 @@ app.post('/resetPassword', (req, res) => {
     });
   });
 });
-
-// app.use('/privacyPolicy', (req, res) => {
-//   res.sendFile('public/privacyPolicy.html');
-// })
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
