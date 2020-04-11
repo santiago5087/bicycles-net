@@ -81,8 +81,8 @@ app.use('/api/users', usersAPIRouter);
 //Permisos de la API
 app.get("/auth/google", passport.authenticate("google", {
     scope: [
-      "https://www.googleapis.com/auth/plus.login",
-      "https://www.googleapis.com/auth/plus.profile.emails.read"]} ));
+      "profile",
+      "email"]} ));
 
 // app.get("/auth/google", passport.authenticate("google", {
 //     scope: ["profile", "email"]
