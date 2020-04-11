@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var findOrCreate = require('mongoose-findorcreate');
 var Token = require('./token');
 var Reserve = require('./reserve');
 var bcrypt = require('bcrypt');
@@ -53,6 +54,7 @@ userSchema.pre('save', function(next) { //Si se utiliza un arrow function no fun
 });
 
 userSchema.plugin(uniqueValidator, {message: "Error, {PATH} already exists"});
+userSchema.plugin(findOrCreate);
 
 userSchema.methods.validPassword = function(pass) {
     return bcrypt.compareSync(pass, this.password);
@@ -107,9 +109,11 @@ userSchema.methods.resetPassword = function(cb) {
     });
 }
 
-userSchema.statics.findOneOrCreateByGoogle = function findOrCreate(condition, callback) {};
+userSchema.statics.findOneOrCreateByGoogle = function findOrCreate(condition, callback) {
+    return callback(condition);
+};
 /*
-function(condition, callback) {
+function findOrCreate(condition, callback) {
     const self = this;
     console.log(condition);
     self.findOne({
