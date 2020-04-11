@@ -31,33 +31,26 @@ if (process.env.NODE_ENV == 'development') {
     collection: 'sessions'
   });
   
-  // store.on('error', (err) => {
-  //   assert.ifError(error);
-  //   assert.ok(false);
-  // });
+  store.on('error', (err) => {
+    assert.ifError(error);
+    assert.ok(false);
+  });
 }
-
-var app = express();
-
-app.set('secretKey', 'miClaveSuperSecreta112233');
-app.use(session({
-  cookie: {maxAge: 240 * 60 * 60 * 1000}, //Tiempo de duración de la cookie (milisec.)
-  store: store,
-  saveUninitialized: true,
-  resave: true,
-  secret: '***Bicycles network in Medellín !!!***'
-}));
-//secret: Es la semilla de la generación del código de ecriptación del id de la cookie que viaja entre el servidor y el cliente
 
 var mongoDB = process.env.MONGO_URI;
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+mongoose.Promise = global.Promise;
 mongoose.set('useCreateIndex', true);
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error: '));
 
+var app = express();
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+app.set('secretKey', 'miClaveSuperSecreta112233');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -66,6 +59,15 @@ app.use(cookieParser());
 app.use(passport.initialize());
 app.use(passport.session()); //Para cuando se usa sesiones persistentes
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  cookie: {maxAge: 240 * 60 * 60 * 1000}, //Tiempo de duración de la cookie (milisec.)
+  store: store,
+  saveUninitialized: true,
+  resave: true,
+  secret: '***Bicycles network in Medellín !!!***'
+}));
+//secret: Es la semilla de la generación del código de ecriptación del id de la cookie que viaja entre el servidor y el cliente
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
