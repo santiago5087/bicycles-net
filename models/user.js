@@ -22,6 +22,7 @@ var userSchema = new Schema({
         trim: true,
         //required: true
     },
+    googleId: String,
     email: {
         type: String,
         unique: true, //No funciona sin el plugin
@@ -110,15 +111,11 @@ userSchema.methods.resetPassword = function(cb) {
 }
 
 userSchema.statics.findOneOrCreateByGoogle = function findOrCreate(condition, callback) {
-    return callback(condition);
-};
-/*
-function findOrCreate(condition, callback) {
     const self = this;
     console.log(condition);
     self.findOne({
         $or: [
-        {googleId: condition.id}, {email: condition.emails[0].value}
+        {'googleId': condition.id}, {'email': condition.emails[0].value}
         ]}, function(err, result) {
             if (result) {
                 callback(err, result);
@@ -140,6 +137,5 @@ function findOrCreate(condition, callback) {
             }
         });
 }
-*/
 
 module.exports = mongoose.model('User', userSchema);

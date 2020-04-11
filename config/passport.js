@@ -23,13 +23,14 @@ passport.use(new GoogleStrategy({
     function(accessToken, refreshToken, profile, cb) { //profile: datos de la cuenta de google
         console.log(profile);
 
-        User.findOrCreate({ email: profile.emails[0].value }, function (err, user) {
-            console.log("Un nuevo usuario fue insertado!")
-            return cb(err, user);
-          });
-        // User.findOneOrCreateByGoogle(profile, function(err, user) {
+        // User.findOrCreate({ email: profile.emails[0].value }, function (err, user) {
+        //     console.log("Un nuevo usuario fue insertado!")
         //     return cb(err, user);
-        // });
+        //   });
+
+        User.findOneOrCreateByGoogle(profile, function(err, user) {
+            return cb(err, user);
+        });
     }
 ));
 
