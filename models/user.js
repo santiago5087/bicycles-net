@@ -18,6 +18,7 @@ const validateEmail = (email) => {
 
 var userSchema = new Schema({
     googleId: String,
+    facebookId: String,
     name: {
         type: String,
         trim: true,
@@ -124,6 +125,35 @@ userSchema.statics.findOneOrCreateByGoogle = function findOrCreate(condition, ca
                 console.log(condition);
                 var values = {}
                 values.googleId = condition.id;
+                values.email = condition.emails[0].value;
+                values.name = condition.displayName || 'NAMELESS';
+                values.verificated = true;
+                values.password = condition.id
+                console.log('---------------- VALUES----------------------');
+                console.log(values);
+
+                self.create(values, function(err, result) {
+                    if (err) console.log(err);
+                    return callback(err, result);
+                });
+            }
+        });
+}
+
+userSchema.statics.findOneOrCreateByFacebook = function findOrCreate(condition, callback) {
+    const self = this;
+    console.log(condition);
+    self.findOne({
+        $or: [
+        {'facebookId': condition.id}, {'email': condition.emails[0].value}
+        ]}, function(err, result) {
+            if (result) {
+                callback(err, result);
+            } else {
+                console.log('---------------- CONDITION ------------------');
+                console.log(condition);
+                var values = {}
+                values.facebookId = condition.id;
                 values.email = condition.emails[0].value;
                 values.name = condition.displayName || 'NAMELESS';
                 values.verificated = true;

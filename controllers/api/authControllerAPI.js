@@ -25,5 +25,15 @@ module.exports = {
                 res.status(200).json({message: "An email was sent to re-establish password", data: null});
             });
         });
+    },
+    authFacebookToken: function(req, res, next) {
+        if (req.user) {
+            req.user.save().then(() => {
+                const token = jwt.sign({id: req.user.id}, req.app.get('secretKey'), {expiresIn: '7d'});
+                res.status(200).json({message: "User found or created!", data: {user: req.user, token: token}});
+            });
+        } else {
+            res.status(401);
+        }
     }
 }

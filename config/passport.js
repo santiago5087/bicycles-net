@@ -1,6 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const FacebookTokenStrategy = require('passport-facebook-token');   
 const User = require('../models/user');
 
 passport.use(new LocalStrategy(
@@ -15,6 +16,7 @@ passport.use(new LocalStrategy(
     }
 ));
 
+//Hacer la autenticación por token de Google y la autenticación web de Facebook
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -27,6 +29,23 @@ passport.use(new GoogleStrategy({
             return cb(err, user);
         });
     }
+));
+
+passport.use(new FacebookTokenStrategy({
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET
+  }, function(accessToken, refreshToken, profile, done) {
+      try {
+          User.findOneOrCreateByFacebook({facebookId: profile.id}, function (error, user) {
+              if (error) console.log('error' + error);
+              else return done(error, user);
+          });
+
+        } catch(error2) {
+            console.log(err2);
+            return done(error2, null);
+        }
+      }
 ));
 
 passport.serializeUser((user, done) => {
