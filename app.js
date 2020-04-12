@@ -174,7 +174,7 @@ function loggedIn(req, res, next) { //Para la parte web, para API se hace de otr
 
 //secretKey: clave con la cual se cifra el token
 function validateUser(req, res, next) {
-  jwt.verify(req.headers['x-acces-token'], req.app.get('secretKey'), (err, decoded) => {
+  jwt.verify(req.headers['x-access-token'], req.app.get('secretKey'), (err, decoded) => {
     if (err) res.json({status: "error", message: err.message, data: null});
     else {
       req.body.userId = decoded.id;

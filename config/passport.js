@@ -36,14 +36,14 @@ passport.use(new FacebookTokenStrategy({
     clientSecret: process.env.FACEBOOK_APP_SECRET
   }, function(accessToken, refreshToken, profile, done) {
       try {
-          User.findOneOrCreateByFacebook({facebookId: profile.id}, function (error, user) {
+          User.findOneOrCreateByFacebook(profile, function (error, user) {
               if (error) console.log('error' + error);
               else return done(error, user);
           });
 
-        } catch(error2) {
+        } catch(err2) {
             console.log(err2);
-            return done(error2, null);
+            return done(err2, null);
         }
       }
 ));
