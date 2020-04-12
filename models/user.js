@@ -96,7 +96,7 @@ userSchema.methods.resetPassword = function(cb) {
         if (err) { return cb(err); }
 
         const mailOptions = {
-            from: 'no-reply@bicylesnet.com',
+            from: 'esmarina@unal.edu.co', //Cuenta verificada en SendGrid
             to: emailDestination,
             subject: 'Account password reset',
             text: 'Hi!, \n\n' + 'Please, to reset the password your account click on this link: \n' + 'http://localhost:3000' + '\/resetPassword\/' + token.token + ' \n'
